@@ -72,8 +72,8 @@ export default {
   },
 
   async mounted() {
-    this.IronDiceAddress = "0x2f6f6eeef8a6f1f9991e4d671690965a843a6e28"
-    this.erc20TokenAddress = "0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e"
+    this.IronDiceAddress = "0xF2150aD0554390A53567636813bC5168106b551F"
+    this.erc20TokenAddress = "0xc69F4eF2138764A52e7dd7Ec2931d1CdD7B32d0f"
     this.IronDice = await new this.$web3.eth.Contract(
       ironDiceABI,
       this.IronDiceAddress
