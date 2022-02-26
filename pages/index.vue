@@ -1,6 +1,7 @@
 <template>
 
   <div class="flex flex-col w-full">
+    <connect />
     <div class = "flex flex-row">
     <div :show="true" text="6X Gains" class= "grid-cols-4 h-full w-1/3">
     </div>
@@ -97,8 +98,8 @@ export default {
             },
           })
           .on('data', function (event) {
-            this.battleData = events.map((a) => a.returnValues)
-            console.log(this.battleData, "Game Outcome")
+            // this.battleData = events.map((a) => a.returnValues)
+            // console.log(this.battleData, "Game Outcome")
             console.log(event) // same results as the optional callback above
           })
         this.load()
