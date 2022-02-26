@@ -39,6 +39,7 @@
 
 <script>
 import ironDiceABI from 'assets/irondiceABI.json'
+import erc20ABI from 'assets/erc20ABI.json'
 
 export default {
   name: 'App',
@@ -71,17 +72,20 @@ export default {
   },
 
   async mounted() {
-    let address = "0x2f6f6eeef8a6f1f9991e4d671690965a843a6e28"
-
-
+    this.IronDiceAddress = "0x2f6f6eeef8a6f1f9991e4d671690965a843a6e28"
+    this.erc20TokenAddress = "0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e"
     this.IronDice = await new this.$web3.eth.Contract(
       ironDiceABI,
-      address
+      this.IronDiceAddress
+    )
+    this.TagToken = await new this.$web3.eth.Contract(
+      erc20ABI,
+      this.erc20TokenAddress
     )
     const accounts = await ethereum.request({ method: 'eth_accounts' })
     //We take the first address in the array of addresses and display it
     this.selectedAccount = accounts[0]
-    console.log(this.$web3, this.IronDice, accounts)
+    console.log(this.$web3, this.IronDice, accounts, this.TagToken)
     await this.load()
     try {
         const latestSubMax = (await this.$web3.eth.getBlockNumber()) - 3000
@@ -111,7 +115,7 @@ export default {
       this.getSettledBets()
     },
     async placeBet() {
-      // await this.approval()
+      await this.approval()
       try {
         let betAmountCTAG = this.$web3.utils.toWei(String(this.betAmount))
         console.log(betAmountCTAG)
