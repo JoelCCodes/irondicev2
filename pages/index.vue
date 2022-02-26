@@ -36,8 +36,10 @@
 
 </template>
 
+
 <script>
-import { mapState } from 'vuex'
+import ironDiceABI from 'assets/irondiceABI.json'
+
 export default {
   name: 'App',
   data() {
@@ -67,73 +69,80 @@ export default {
       ]
     }
   },
-  computed: {
-    ...mapState(['selectedAccount', 'balance']),
-  },
-  async mounted() {
 
-    console.log(this.$web3)
-    // await this.load()
-    // try {
-    //     const latestSubMax = (await this.$web3.eth.getBlockNumber()) - 3000
-    //     await this.$contracts.IronDice.events
-    //       .DiceRolled({
-    //         fromBlock: latestSubMax,
-    //         filter: {
-    //           owner: this.selectedAccount,
-    //         },
-    //       })
-    //       .on('data', function (event) {
-    //         this.battleData = events.map((a) => a.returnValues)
-    //         console.log(this.battleData, "Game Outcome")
-    //         console.log(event) // same results as the optional callback above
-    //       })
-    //     this.load()
+  async mounted() {
+    let address = "0x2f6f6eeef8a6f1f9991e4d671690965a843a6e28"
+
+
+    this.IronDice = await new this.$web3.eth.Contract(
+      ironDiceABI,
+      address
+    )
+    const accounts = await ethereum.request({ method: 'eth_accounts' })
+    //We take the first address in the array of addresses and display it
+    this.selectedAccount = accounts[0]
+    console.log(this.$web3, this.IronDice, accounts)
+    await this.load()
+    try {
+        const latestSubMax = (await this.$web3.eth.getBlockNumber()) - 3000
+        await this.IronDice.events
+          .DiceRolled({
+            fromBlock: latestSubMax,
+            filter: {
+              owner: this.selectedAccount,
+            },
+          })
+          .on('data', function (event) {
+            this.battleData = events.map((a) => a.returnValues)
+            console.log(this.battleData, "Game Outcome")
+            console.log(event) // same results as the optional callback above
+          })
+        this.load()
         
-    // } catch (error) {
-    //     console.log(error)
-    // }
+    } catch (error) {
+        console.log(error)
+    }
   },
   methods: {
-    // async load() {
-    //   this.rolledValue = await this.$contracts.IronDice.methods.lastDiceRoll().call()
-    //   this.totalBets = await this.$contracts.IronDice.methods.totalBets().call()
-    //   this.totalRewards = (await this.$contracts.IronDice.methods.totalRewards().call()) / 10 ** 18
-    //   this.getSettledBets()
-    // },
-    // async placeBet() {
-    //   // await this.approval()
-    //   try {
-    //     let betAmountCTAG = this.$web3.utils.toWei(String(this.betAmount))
-    //     console.log(betAmountCTAG)
-    //     let res = await this.$contracts.IronDice.methods.placeBet(betAmountCTAG, this.diceOutcome).send({
-    //       from: this.selectedAccount,
-    //     })
-    //     console.log(res)
-    //   } catch (error) {
-    //     console.log(error)
-    //   } finally {
-    //     this.load()
-    //   }
-    // },
-    // async approval() {
-    //   await this.$contracts.TagToken.methods.approve(this.$contracts.IronDice._address, String(100 * 10 ** 18)).send({
-    //     from: this.selectedAccount,
-    //   })
-    // },
-    // async getSettledBets() {
-    //   try {
-    //     const latestSubMax = (await this.$web3.eth.getBlockNumber()) - 3000
-    //     const events = await this.$contracts.IronDice.getPastEvents('DiceRolled', {
-    //       filter: { owner: this.selectedAccount },  
-    //       fromBlock: latestSubMax,
-    //     })
-    //     this.battleData = events.map((a) => a.returnValues)
-    //     console.log(events)
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
-    // },
+    async load() {
+      this.rolledValue = await this.IronDice.methods.lastDiceRoll().call()
+      this.totalBets = await this.IronDice.methods.totalBets().call()
+      this.totalRewards = (await this.IronDice.methods.totalRewards().call()) / 10 ** 18
+      this.getSettledBets()
+    },
+    async placeBet() {
+      // await this.approval()
+      try {
+        let betAmountCTAG = this.$web3.utils.toWei(String(this.betAmount))
+        console.log(betAmountCTAG)
+        let res = await this.IronDice.methods.placeBet(betAmountCTAG, this.diceOutcome).send({
+          from: this.selectedAccount,
+        })
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.load()
+      }
+    },
+    async approval() {
+      await this.TagToken.methods.approve(this.IronDice._address, String(100 * 10 ** 18)).send({
+        from: this.selectedAccount,
+      })
+    },
+    async getSettledBets() {
+      try {
+        const latestSubMax = (await this.$web3.eth.getBlockNumber()) - 3000
+        const events = await this.IronDice.getPastEvents('DiceRolled', {
+          filter: { owner: this.selectedAccount },  
+          fromBlock: latestSubMax,
+        })
+        this.battleData = events.map((a) => a.returnValues)
+        console.log(events)
+      } catch (e) {
+        console.log(e)
+      }
+    },
   },
 }
 </script>

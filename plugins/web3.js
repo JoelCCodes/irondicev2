@@ -1,10 +1,9 @@
 import Web3 from 'web3'
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-export default function (context, inject) {
-  // pass null as provider to not force connection during plugin instantiation
-  // as it will be set via web3.setProvider via an action
-  const web3 = new Web3(null)
+export default async function (context, inject) {
+  //   const httpEndpoint = 'http://127.0.0.1:8545'
+  //   const web3 = new Web3(new Web3.providers.HttpProvider(httpEndpoint))
+  let web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545')
 
   inject('web3', web3)
 }
