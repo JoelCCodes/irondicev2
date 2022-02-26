@@ -6,7 +6,7 @@ pragma solidity ^0.8.11;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
 import "https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/VRFConsumerBase.sol";
-
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
 // import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v2.5.0/contracts/token/ERC20/IERC20.sol";
 
@@ -21,7 +21,7 @@ import "https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src
 // Implement Events
 // Bets Array and Bets Length
 
-contract IronDice is VRFConsumerBase {
+contract IronDice is VRFConsumerBase, Ownable {
     IERC20 public nativeGameToken;
     mapping(address => UserBet) public userBets;
     mapping(bytes32 => address) public requestIdtoAddress;
@@ -171,8 +171,13 @@ contract IronDice is VRFConsumerBase {
 
 
     }
-    // function setNativeToken(IERC20 newTokenAddress) public {
-    //     require(msg.sender == owner,'Not the contract owner');
-    //     nativeGameToken = newTokenAddress;
-    // }
+
+    function withdrawNativeGameToken(uint256 amount) public onlyOwner {
+        require(nativeGameToken.balanceOf(address(this)) >= amount, 'Not enough tokens');
+        nativeGameToken.transfer(msg.sender, amount);
+    }
+
+    function setNativeToken(IERC20 newTokenAddress) public onlyOwner{
+        nativeGameToken = newTokenAddress;
+    }
 }
