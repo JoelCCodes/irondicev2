@@ -7,6 +7,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
 // import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v2.5.0/contracts/token/ERC20/IERC20.sol";
 
@@ -57,7 +58,8 @@ contract IronDice is VRFConsumerBase, Ownable {
             0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
             0x326C977E6efc84E512bB9C30f76E30c160eD06FB  // LINK Token
         )  {
-        // TODO: Complete this
+
+        console.log("Deploying Iron Dice contract with native game token: %s", address(_nativeGameToken));
         // Store _nativeGameToken to contracts Storage
         nativeGameToken = _nativeGameToken;
         keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
