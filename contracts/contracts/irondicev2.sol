@@ -54,14 +54,14 @@ contract IronDice is VRFConsumerBase, Ownable {
     /**
      * Initializes the contract with an address of an ERC-20 token
      */
-    constructor(IERC20 _nativeGameToken)  VRFConsumerBase(
+    constructor(address _nativeGameToken)  VRFConsumerBase(
             0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
             0x326C977E6efc84E512bB9C30f76E30c160eD06FB  // LINK Token
         )  {
 
-        console.log("Deploying Iron Dice contract with native game token: %s", address(_nativeGameToken));
+        console.log("Deploying Iron Dice contract with native game token: %s", _nativeGameToken);
         // Store _nativeGameToken to contracts Storage
-        nativeGameToken = _nativeGameToken;
+        nativeGameToken = IERC20(_nativeGameToken);
         keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
         fee = 0.0001 * 10 ** 18; // 0.0001 LINK
     }
